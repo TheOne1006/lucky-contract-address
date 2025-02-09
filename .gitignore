@@ -54,6 +54,5 @@ public/monaco-editor/*
 # keccak-wasm
 keccak-wasm/target
 keccak-wasm/pkg
-src/workers/keccak_wasm.*
+src/workers/keccak_wasm.d.ts
 src/workers/keccak_wasm_bg.*
-src/workers/keccak_wasm.js
