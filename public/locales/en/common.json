@@ -1,0 +1,95 @@
+{
+  "nav": {
+    "contract": "Contract Viewer",
+    "lucky": "Lucky",
+    "logs": "Logs",
+    "github": "GitHub"
+  },
+  "home": {
+    "title": "Lucky Contract Address",
+    "description": "Lucky Contract Address is a platform for finding and analyzing contract addresses on the Ethereum blockchain.",
+    "subtitle": "A tool to help you deploy smart contracts with specific address patterns across multiple blockchain networks",
+    "features": {
+      "multiChain": {
+        "title": "Multi-Chain Support",
+        "description": "Deploy contracts on different blockchain networks"
+      },
+      "luckyAddress": {
+        "title": "Lucky Address Generation",
+        "description": "Generate contract addresses matching specific patterns, supporting both hex format and regex matching"
+      },
+      "smartContract": {
+        "title": "Smart Contract Compilation",
+        "description": "Built-in Solidity compiler with support for multiple versions"
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "steps": {
+        "step1": {
+          "title": "Write/Compile Contract",
+          "description": "Input Solidity code or directly input contract bytecode"
+        },
+        "step2": {
+          "title": "Configure Lucky Number",
+          "description": "Set desired address pattern and constructor parameters"
+        },
+        "step3": {
+          "title": "Start Search",
+          "description": "Parallel computation until finding matching addresses"
+        },
+        "step4": {
+          "title": "Deploy Contract",
+          "description": "Select lucky address and execute deployment transaction"
+        }
+      }
+    }
+  },
+  "action": {
+    "Create": "Create",
+    "Load": "Load",
+    "Save": "Save",
+    "Delete": "Delete",
+    "Check": "Check",
+    "NextStep": "Next Step",
+    "Cancel": "Cancel",
+    "Compile": "Compile",
+    "Start": "Start",
+    "Stop": "Stop",
+    "Collapse": "Collapse",
+    "Copy": "Copy",
+    "Deploy": "Deploy",
+    "Compileing": "Compiling..."
+  },
+  "label": {
+    "CheckTitle": "Lucky Contract Address",
+    "CheckDescription": "Find matching addresses based on the following parameters.",
+    "FactoryAddress": "Factory Address",
+    "LuckNumberList": "Luck Number List",
+    "DeployParams": "Deploy Params",
+    "BytecodePreview": "Bytecode Preview",
+    "LuckyNumber": "Lucky Number",
+    "ProcessCount": "Process Count",
+    "Address": "Address",
+    "action" : "action",
+    "Salt": "Salt",
+    "FindAt": "Find At",
+    "DeployContract": "Deploy Contract",
+    "DeployContractDescription": "Deploy your lucky contract address with the following parameters",
+    "LuckyAddress": "Lucky Address",
+    "LuckySalt": "Lucky Salt",
+    "EstimateGas": "Estimated Gas Required",
+    "EstimateGwei": "Estimated Gas Price (Gwei)",
+    "DonationAmount": "Donation Amount",
+    "YourAmount": "Your Amount"
+  },
+   "status": {
+    "Occupied": "Occupied"
+  },
+  "message": {
+    "ConfirmDelete": "Confirm to delete {{name}}?"
+  },
+  "tip": {
+    "LuckyNumber": "Write your lucky numbers or regular expressions, one per line."
+  }
+}

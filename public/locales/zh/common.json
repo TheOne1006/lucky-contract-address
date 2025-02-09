@@ -1,0 +1,95 @@
+{
+  "nav": {
+    "contract": "合约预览",
+    "lucky": "幸运地址",
+    "logs": "日志",
+    "github": "GitHub"
+  },
+  "home": {
+    "title": "幸运合约地址",
+    "description": "幸运合约地址是一个用于查找和分析以太坊区块链上合约地址的平台。",
+    "subtitle": "一个帮助多个区块链部署含有你幸运数字的智能合约的工具",
+    "features": {
+      "multiChain": {
+        "title": "多链支持",
+        "description": "支持在不同的区块链部署合约"
+      },
+      "luckyAddress": {
+        "title": "幸运地址生成",
+        "description": "生成满足特定模式的合约地址，支持16进制格式和正则表达式匹配"
+      },
+      "smartContract": {
+        "title": "智能合约编译",
+        "description": "内置Solidity编译器，支持多个版本"
+      }
+    },
+    "howItWorks": {
+      "title": "使用方法",
+      "steps": {
+        "step1": {
+          "title": "编写/编译合约",
+          "description": "输入Solidity代码或直接输入合约字节码"
+        },
+        "step2": {
+          "title": "配置幸运数字",
+          "description": "设置期望的地址模式和构造函数参数"
+        },
+        "step3": {
+          "title": "开始搜索",
+          "description": "并行计算直到找到符合条件的地址"
+        },
+        "step4": {
+          "title": "部署合约",
+          "description": "选择幸运地址并执行部署交易"
+        }
+      }
+    }
+  },
+  "action": {
+    "Create": "创建",
+    "Load": "加载",
+    "Save": "保存",
+    "Delete": "删除",
+    "Check": "检查",
+    "NextStep": "下一步",
+    "Cancel": "取消",
+    "Compile": "编译",
+    "Start": "开始",
+    "Stop": "停止",
+    "Collapse": "收起",
+    "Copy": "复制",
+    "Deploy": "部署",
+    "Compileing": "编译中..."
+  },
+  "label": {
+    "CheckTitle": "幸运合约地址",
+    "CheckDescription": "将会根据以下参数，超找符合条件的地址。",
+    "FactoryAddress": "工厂合约地址",
+    "LuckNumberList": "幸运数字列表",
+    "DeployParams": "部署参数",
+    "BytecodePreview": "Bytecode预览",
+    "LuckyNumber": "幸运数字",
+    "ProcessCount": "进程数量",
+    "Address": "地址",
+    "action": "操作",
+    "Salt": "Salt",
+    "FindAt": "发现于",
+    "DeployContract": "部署合约",
+    "DeployContractDescription": "使用以下参数即可获得你想要的幸运合约地址",
+    "LuckyAddress": "幸运地址",
+    "LuckySalt": "随机值",
+    "EstimateGas": "预估所需Gas",
+    "EstimateGwei": "预估所需Gwei",
+    "DonationAmount": "捐赠 eth",
+    "YourAmount": "账户 ETH"
+  },
+  "status": {
+    "Occupied": "已占用"
+  },
+  "message": {
+    "ConfirmDelete": "确认删除 {{name}}?"
+  },
+  "tip": {
+    "LuckyNumber": "Write your lucky numbers or regular expressions, one per line."
+  }
+}

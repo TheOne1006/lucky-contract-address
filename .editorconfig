@@ -1,0 +1,13 @@
+# 编辑器通用设置
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# 让具体的缩进设置由 Prettier 处理
+# [*.{js,jsx,ts,tsx,vue,json}]
+# indent_style = space
+# indent_size = 4

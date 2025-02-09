@@ -1,0 +1,79 @@
+@theme {
+  --font-family-serif: Inter, sans-serif;
+  --font-family-sans: Inter, sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+
+  /* fontSize */
+  --text-2xs: 10px;
+  --text-tiny: 13px;
+  --font-2base: 16px;
+
+  --black-900: 0 0 0;
+  --black-800: 8 8 8;
+  --black-700: 16 17 17;
+  --black-600: 20 21 21;
+  --black-500: 27 27 27;
+  --black-400: 47 47 47;
+
+  /* text colors */
+  --color-black-900: oklch(var(--black-900) / <alpha-value>);
+  --color-black-800: oklch(var(--black-800) / <alpha-value>);
+  --color-black-700: oklch(var(--black-700) / <alpha-value>);
+  --color-black-600: oklch(var(--black-600) / <alpha-value>);
+  --color-black-500: oklch(var(--black-500) / <alpha-value>);
+  --color-black-400: oklch(var(--black-400) / <alpha-value>);
+
+  /* colors */
+  --color-border: rgb(var(--border) / <alpha-value>);
+  --color-input: rgb(var(--input) / <alpha-value>);
+  --color-ring: rgb(var(--ring) / <alpha-value>);
+  --color-background: rgb(var(--background) / <alpha-value>);
+  --color-foreground: rgb(var(--foreground) / <alpha-value>);
+  --color-primary: rgb(var(--primary) / <alpha-value>);
+  --color-primary-foreground: rgb(var(--primary-foreground) / <alpha-value>);
+  --color-secondary: rgb(var(--secondary) / <alpha-value>);
+  --color-secondary-foreground: rgb(
+    var(--secondary-foreground) / <alpha-value>
+  );
+  --color-destructive: rgb(var(--destructive) / <alpha-value>);
+  --color-destructive-foreground: rgb(
+    var(--destructive-foreground) / <alpha-value>
+  );
+  --color-muted: rgb(var(--muted) / <alpha-value>);
+  --color-muted-foreground: rgb(var(--muted-foreground) / <alpha-value>);
+  --color-accent: rgb(var(--accent) / <alpha-value>);
+  --color-accent-foreground: rgb(var(--accent-foreground) / <alpha-value>);
+  --color-popover: rgb(var(--popover) / <alpha-value>);
+  --color-popover-foreground: rgb(var(--popover-foreground) / <alpha-value>);
+  --color-card: rgb(var(--card) / <alpha-value>);
+  --color-card-foreground: rgb(var(--card-foreground) / <alpha-value>);
+
+  /* radius */
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  /* keyframes */
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+
+  /* animation */
+  --animation-accordion-down: accordion-down 0.2s ease-out;
+  --animation-accordion-up: accordion-up 0.2s ease-out;
+}

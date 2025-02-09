@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Keccak WASM Test</title>
+    <style>
+      body {
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+      .input-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+      }
+      button {
+        padding: 10px 20px;
+        background: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #45a049;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 15px;
+        background: #f5f5f5;
+      }
+      .test-case {
+        margin-top: 20px;
+        padding: 15px;
+        background: #e9f5ff;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Keccak WASM Test</h1>
+
+    <div class="input-group">
+      <h2>Test keccak256</h2>
+      <label for="keccak-input">Input String:</label>
+      <input type="text" id="keccak-input" value="Hello, World!" />
+      <button onclick="testKeccak256()">Calculate Hash</button>
+      <div id="keccak-result" class="result"></div>
+    </div>
+
+    <div class="input-group">
+      <h2>Test CREATE2 Address</h2>
+      <label for="factory-address">Factory Address (hex):</label>
+      <input
+        type="text"
+        id="factory-address"
+        value="Dc64a140Aa3E981100a9becA4E685f962f0cF6C9"
+      />
+      <label for="salt">Salt (hex, 32 bytes):</label>
+      <input
+        type="text"
+        id="salt"
+        value="000000000000000000000000000000000000000000000000000000000000000c"
+      />
+      <label for="bytecode-hash">Bytecode Hash (hex):</label>
+      <input
+        type="text"
+        id="bytecode-hash"
+        value="799813918fa0bdf07c97809b9d0d698d2c93356913a2c736747e65cb17f52045"
+      />
+      <button onclick="testCreate2()">Calculate Address</button>
+      <div id="create2-result" class="result"></div>
+    </div>
+
+    <div class="test-case">
+      <h3>Test Cases</h3>
+      <p><strong>keccak256("Hello, World!"):</strong></p>
+      <p>
+        Expected:
+        acaf3289d7b601cbd114fb36c4d29c85bbfd5e133f14cb355c3fd8d99367964f
+      </p>
+      <p><strong>CREATE2 Address Test Case:</strong></p>
+      <p>Expected Address: 0x9B147D70D6bF720AC292E8ad862ad65E60769013</p>
+    </div>
+
+    <script type="module">
+      import init, {
+        keccak256,
+        compute_create2_address,
+      } from "./pkg/keccak_wasm.js"
+
+      window.testKeccak256 = async () => {
+        await init()
+        const input = document.getElementById("keccak-input").value
+        const inputBytes = new TextEncoder().encode(input)
+        const result = keccak256(inputBytes)
+        const hexResult = Array.from(result)
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("")
+        document.getElementById("keccak-result").textContent =
+          `Hash: ${hexResult}`
+      }
+
+      window.testCreate2 = async () => {
+        await init()
+        const factoryAddress = document.getElementById("factory-address").value
+        const salt = document.getElementById("salt").value
+        const bytecodeHash = document.getElementById("bytecode-hash").value
+
+        console.log("factoryAddress, salt, bytecodeHash:")
+        console.log(factoryAddress, salt, bytecodeHash)
+
+        // Convert hex strings to Uint8Array
+        const factoryAddressBytes = hexToBytes(factoryAddress)
+        const saltBytes = hexToBytes(salt)
+        const bytecodeHashBytes = hexToBytes(bytecodeHash)
+
+        const result = compute_create2_address(
+          factoryAddressBytes,
+          saltBytes,
+          bytecodeHashBytes,
+        )
+        const hexResult = Array.from(result)
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("")
+        const address = "0x" + hexResult.slice(24) // Take last 20 bytes for address
+        console.log("address:", address)
+        document.getElementById("create2-result").textContent =
+          `Full Hash: 0x${hexResult}\nContract Address: ${address}`
+      }
+
+      function hexToBytes(hex) {
+        hex = hex.replace("0x", "")
+        const bytes = new Uint8Array(hex.length / 2)
+        for (let i = 0; i < hex.length; i += 2) {
+          bytes[i / 2] = parseInt(hex.substr(i, 2), 16)
+        }
+        return bytes
+      }
+    </script>
+  </body>
+</html>
