@@ -21,6 +21,7 @@ import {
   IGenWorkerOutput,
   GenWorkerOutputType,
 } from "@/types/gen.worker"
+import { jsonStringify } from "@/util/string"
 
 const workerSize = MAX_SALT / BigInt(MAX_WORKERS)
 
@@ -39,7 +40,7 @@ export class GenWorkersManager {
     msg: any,
     type?: any,
   ) => void
-  private workerLogInterval = 1_000_000 // 10, 0000
+  private workerLogInterval = 1_000_000 // 100 w
   private logSuccess: (address: string, salt: string, time: number) => void
 
   public constructor(
@@ -122,7 +123,7 @@ export class GenWorkersManager {
       let saltStart = BigInt(i) * workerSize
       const saltEnd = saltStart + workerSize
 
-      if (!saltStart) {
+      if (i == 0) {
         // 防止 saltStart 为 0
         saltStart = BigInt(1)
       }
@@ -139,6 +140,12 @@ export class GenWorkersManager {
 
       _workers.push(item)
     }
+
+    // const saltStarts = _workers.map((w) =>
+    //   w.saltStart.toString(16).padStart(64, "0"),
+    // )
+    // current.toString(16).padStart(64, "0")
+    // console.log(`initAllWorkers: saltStarts: ${jsonStringify(saltStarts)}`)
 
     this.workers = _workers
   }
@@ -314,7 +321,12 @@ export class GenWorkersManager {
       } as IGenWorkerInput)
 
       this.log(item.workerId, "info", "starting...")
-      this.log(item.workerId, "info", `start saltCurrent: ${item.saltCurrent}`)
+      //
+      this.log(
+        item.workerId,
+        "info",
+        `start saltCurrent: 0x${item.saltCurrent.toString(16).padStart(64, "0")}`,
+      )
     }
   }
 
