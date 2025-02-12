@@ -40,7 +40,9 @@ export class GenWorkersManager {
     msg: any,
     type?: any,
   ) => void
-  private workerLogInterval = 1_000_000 // 100 w
+  private workerLogInterval = Number(
+    process.env.NEXT_PUBLIC_WORKER_LOG_INTERVAL ?? 1_000_000,
+  ) // 100 w
   private logSuccess: (address: string, salt: string, time: number) => void
 
   public constructor(
