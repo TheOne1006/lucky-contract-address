@@ -116,8 +116,8 @@ describe("deploy", () => {
   describe("computAddressWithCreate2EthereumjsUtilAndByteCodeHash", () => {
     it("salt 12", () => {
       const factory_address = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
-      let salt = BigInt(12) // == 0x000000000000000000000000000000000000000000000000000000000000000c
-      let bytecode_hash =
+      const salt = BigInt(12) // == 0x000000000000000000000000000000000000000000000000000000000000000c
+      const bytecode_hash =
         "0x799813918fa0bdf07c97809b9d0d698d2c93356913a2c736747e65cb17f52045" as `0x${string}`
 
       // 计算 create2 地址
@@ -126,14 +126,14 @@ describe("deploy", () => {
         salt,
         bytecode_hash,
       )
-      let expected = "0x9B147D70D6bF720AC292E8ad862ad65E60769013"
+      const expected = "0x9B147D70D6bF720AC292E8ad862ad65E60769013"
       expect(actual.toLocaleLowerCase()).toBe(expected.toLocaleLowerCase())
     })
 
     it("salt 13", () => {
       const factory_address = "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9"
-      let salt = BigInt(13) // == 0x000000000000000000000000000000000000000000000000000000000000000d
-      let bytecode_hash =
+      const salt = BigInt(13) // == 0x000000000000000000000000000000000000000000000000000000000000000d
+      const bytecode_hash =
         "0x799813918fa0bdf07c97809b9d0d698d2c93356913a2c736747e65cb17f52045" as `0x${string}`
 
       // 计算 create2 地址
@@ -142,7 +142,7 @@ describe("deploy", () => {
         salt,
         bytecode_hash,
       )
-      let expected = "0xf82327cb2bc0e53db44fff445f9572b41640285c"
+      const expected = "0xf82327cb2bc0e53db44fff445f9572b41640285c"
       expect(actual.toLocaleLowerCase()).toBe(expected.toLocaleLowerCase())
     })
   })
