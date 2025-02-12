@@ -48,7 +48,7 @@ src/components/ui/vector/icons/*
 
 # build
 public/workers/*
-!public/workers/keccak_wasm_bg.wasm
+!public/workers/*.wasm
 public/monaco-editor/*
 
 # keccak-wasm

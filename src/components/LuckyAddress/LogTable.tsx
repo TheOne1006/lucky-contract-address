@@ -53,7 +53,7 @@ const LogTable = ({ logs, onOpenDeployModal }: LogTableProps) => {
       )}
 
       <div>
-        {logs.reverse().map((log) => (
+        {logs.map((log) => (
           <div
             key={`${log.address}`}
             className={clsx(

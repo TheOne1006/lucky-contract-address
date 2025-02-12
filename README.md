@@ -117,7 +117,7 @@ addr = address(uint160(uint(keccak256(abi.encodePacked(
 
 > tips: 地址会转换成小写toLowerCase
 
-1. `/(\da-f])\1{7}/`: 连续8个相同数字
+1. `/([\0-9a-f])\1{13}/`: 连续13个相同数字
 2. `/^0x[0-9a-f]*(?:.*8){13}[0-9a-f]*$/`: 至少包含13个8（可不连续）
    - 概率为: $P(X \geq 13) = \sum_{k=13}^{40} \binom{40}{k} \left(\frac{1}{16}\right)^k \left(\frac{15}{16}\right)^{40-k}.$
    - $\approx 1.23 \times 10^{-10}$

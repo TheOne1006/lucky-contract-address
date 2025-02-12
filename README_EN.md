@@ -114,7 +114,7 @@ Regex testing site: [regex101](https://regex101.com/)
 
 > tips: addresses are converted to lowercase
 
-1. `/(\da-f])\1{7}/`: 8 consecutive identical digits
+1. `/([\da-f])\1{13}/`: 13 consecutive identical digits
 2. `/^0x[0-9a-f]*(?:.*8){13}[0-9a-f]*$/`: Contains at least 13 occurrences of 8 (can be non-consecutive)
    - Probability: $P(X \geq 13) = \sum_{k=13}^{40} \binom{40}{k} \left(\frac{1}{16}\right)^k \left(\frac{15}{16}\right)^{40-k}.$
    - $\approx 1.23 \times 10^{-10}$

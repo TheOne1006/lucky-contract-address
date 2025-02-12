@@ -97,3 +97,24 @@ export function computAddressWithCreate2EthereumjsUtil(
 
   return `0x${Buffer.from(addressBytes).subarray(-20).toString("hex")}` as `0x${string}`
 }
+
+export function computAddressWithCreate2EthereumjsUtilAndByteCodeHash(
+  factoryAddress: `0x${string}`,
+  salt: bigint,
+  bytecodeHashStr: `0x${string}`,
+): `0x${string}` {
+  // 计算合约字节码的 keccak256 哈希
+  const bytecodeHash = Buffer.from(bytecodeHashStr.slice(2), "hex")
+  // 构建输入数据
+  const input = Buffer.concat([
+    Buffer.from("ff", "hex"),
+    Buffer.from(factoryAddress.slice(2), "hex"),
+    Buffer.from(salt.toString(16).padStart(64, "0"), "hex"),
+    bytecodeHash,
+  ])
+
+  // 计算最终的 keccak256 哈希并转换为地址格式
+  const addressBytes = ethereumjsKeccak256(input)
+
+  return `0x${Buffer.from(addressBytes).subarray(-20).toString("hex")}` as `0x${string}`
+}
