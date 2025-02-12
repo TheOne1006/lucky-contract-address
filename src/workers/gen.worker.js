@@ -117,12 +117,10 @@ self.addEventListener("message", async (msg) => {
   while (current <= max) {
     try {
       const result = compute_batch(progressLogInterval)
-
       result.forEach((item) => {
         const hash = item.toLowerCase()
         processHashMatch(self, hash, workerId, matchRegs)
       })
-
       // 获取最后一个结果
       if (result.length > 0) {
         const lastItem = result[result.length - 1]
@@ -136,7 +134,6 @@ self.addEventListener("message", async (msg) => {
         }
         // current = BigInt(salt)
 
-        // log
         self.postMessage({
           workerId,
           type: "log",

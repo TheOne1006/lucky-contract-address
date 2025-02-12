@@ -40,9 +40,12 @@ export class GenWorkersManager {
     msg: any,
     type?: any,
   ) => void
-  private workerLogInterval = Number(
-    process.env.NEXT_PUBLIC_WORKER_LOG_INTERVAL ?? 1_000_000,
+  private workerBatchSize = Number(
+    process.env.NEXT_PUBLIC_WORKER_BATCH_SIZE ?? 1_000_000,
   ) // 100 w
+  private workerLogInterval = Number(
+    process.env.NEXT_PUBLIC_WORKER_LOG_INTERVAL ?? 10,
+  )
   private logSuccess: (address: string, salt: string, time: number) => void
 
   public constructor(
@@ -260,6 +263,7 @@ export class GenWorkersManager {
 
       // 用于计算效率
       let preTime: number = 0
+      let curCount: number = 0
 
       worker.onmessage = (event) => {
         const { workerId, salt, address, type, time, error } =
@@ -290,21 +294,25 @@ export class GenWorkersManager {
           item.saltCurrent = salt
         } else if (type === GenWorkerOutputType.LOG) {
           item.saltCurrent = salt
-          this.log(workerId, "log", `update current: ${salt}`)
-          this.saveToCache()
 
           const now = Date.now()
 
-          if (preTime) {
-            // ~ 30k ops
+          if (preTime && curCount % this.workerLogInterval == 0) {
+            this.log(workerId, "log", `update current: ${salt}`)
+            this.saveToCache()
+            curCount = 0
+            // curCount = 0
+            // ~ 60k ops
             const elapsedSeconds = (now - preTime) / 1000
-            const speed = this.workerLogInterval / elapsedSeconds
+            const speed = this.workerBatchSize / elapsedSeconds
+
             this.log(
               workerId,
               "log",
               `speed: ${speed.toLocaleString(undefined, { maximumFractionDigits: 2 })} ops/s`,
             )
           }
+          curCount++
           preTime = now
         } else {
           this.log(workerId, "warn", `not found type: ${type}`)
@@ -319,7 +327,7 @@ export class GenWorkersManager {
         saltCurrent: item.saltCurrent,
         bytecodeHash: item.params.bytecodeHash,
         matches: item.params.matches,
-        progressLogInterval: this.workerLogInterval,
+        progressLogInterval: this.workerBatchSize,
       } as IGenWorkerInput)
 
       this.log(item.workerId, "info", "starting...")
