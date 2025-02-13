@@ -6,6 +6,7 @@ contract LuckyFactory {
     event Deploy(address indexed deployedAddress, uint256 salt);
 
     constructor() {
+        // payable() 将这个普通地址转换为 address payable 类型
         owner = payable(msg.sender);
     }
 
@@ -34,8 +35,7 @@ contract LuckyFactory {
 
     function withdraw() public {
         require(msg.sender == owner, "Only owner can withdraw");
-        (bool success, ) = owner.call{value: address(this).balance}("");
-        require(success, "Transfer failed");
+        owner.transfer(address(this).balance);
     }
 
     function calculateAddr(uint256 _salt, bytes memory bytecode) public view returns(address addr) {

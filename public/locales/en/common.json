@@ -59,7 +59,8 @@
     "Collapse": "Collapse",
     "Copy": "Copy",
     "Deploy": "Deploy",
-    "Compileing": "Compiling..."
+    "Compileing": "Compiling...",
+    "Deploying": "Deploying..."
   },
   "label": {
     "CheckTitle": "Lucky Contract Address",

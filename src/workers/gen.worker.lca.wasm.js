@@ -64,7 +64,7 @@ function processHashMatch(worker, hash, workerId, matchRegs) {
     throw new Error("Invalid hash format")
   }
 
-  const address = `0x${hash.slice(24, colonIndex)}`
+  const address = `0x${hash.slice(0, colonIndex)}`
   const salt = `0x${hash.slice(colonIndex + 1, colonIndex + 65)}`
 
   for (const pattern of matchRegs) {
@@ -104,7 +104,9 @@ self.addEventListener("message", async (msg) => {
 
   checkParams(factoryAddress, current, bytecodeHash)
 
-  const saltBytes = hexToBytes(current.toString())
+  // 将 BigInt 转换为固定长度（64位）的十六进制字符串
+  const saltHex = current.toString(16).padStart(64, "0")
+  const saltBytes = hexToBytes(saltHex)
   const factoryAddressBytes = hexToBytes(factoryAddress)
   const bytecodeHashBytes = hexToBytes(bytecodeHash)
 
@@ -115,12 +117,10 @@ self.addEventListener("message", async (msg) => {
   while (current <= max) {
     try {
       const result = compute_batch(progressLogInterval)
-
       result.forEach((item) => {
         const hash = item.toLowerCase()
         processHashMatch(self, hash, workerId, matchRegs)
       })
-
       // 获取最后一个结果
       if (result.length > 0) {
         const lastItem = result[result.length - 1]
@@ -134,7 +134,6 @@ self.addEventListener("message", async (msg) => {
         }
         // current = BigInt(salt)
 
-        // log
         self.postMessage({
           workerId,
           type: "log",

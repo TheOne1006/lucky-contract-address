@@ -56,6 +56,7 @@ export function compute_ready(factory_address, salt, bytecode_hash) {
 }
 
 /**
+ * 计算下一个 CREATE2 地址
  * @returns {string}
  */
 export function compute_next() {
@@ -209,7 +210,6 @@ async function __wbg_init(module_or_path) {
 
   if (typeof module_or_path === "undefined") {
     throw new Error("module_or_path not provided")
-    module_or_path = new URL("worker_lca_bg.wasm", import.meta.url)
   }
   const imports = __wbg_get_imports()
 
