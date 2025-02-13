@@ -9,7 +9,7 @@ import { keccak256 } from "viem"
 
 import { GenWorkersManager } from "@/core/GenWorkersManager"
 import { StorageData as GenWorkerStorageData } from "@/types/gen.worker"
-import { ALLOW_CHAINS_WITH_BUILD_CONTRACT } from "@/util/constants"
+import { ALLOW_CHAINS_WITH_BUILD_CONTRACT, MAX_WORKERS } from "@/util/constants"
 import { DeployParam } from "@/types/lucky"
 import { formatLuckyNumberText } from "@/util/deploy"
 import { genContractByteCodeWithConstructorParams } from "@/util/abi"
@@ -20,7 +20,7 @@ let workerManager: GenWorkersManager | undefined = undefined
 
 export function useLuckyAddress(
   log: (msg: any, type?: IConsoleOutput["type"]) => void,
-  workerNum: number,
+  workerProcess: [number, number],
 ) {
   const chainId = useChainId()
 
@@ -84,19 +84,27 @@ export function useLuckyAddress(
       log(`project title: ${_projectTitle}`)
       log(`factory address: ${_factoryAddress}`)
       log(`luckNumber: ${validLuckMatchers.join(",")}`)
-      log(`init worker num: ${workerNum}`)
+      log(`init worker process: ${workerProcess.join("-")}`)
       log(`forceRecreate: ${forceRecreate}`)
       log(
         `bytecodeHash: ${bytecodeHash.slice(0, 10)}...${bytecodeHash.slice(-8)}`,
       )
       log("------------------------------")
 
+      const allWorkers = new Array(MAX_WORKERS).fill(false)
+
+      const scopeMin = Math.max(workerProcess[0], 0)
+      const scopeMax = Math.min(workerProcess[1], MAX_WORKERS)
+
+      // 将 scopeMin 到 scopeMax 范围内的值设置为 true
+      allWorkers.fill(true, scopeMin - 1, scopeMax)
+
       workerManager = new GenWorkersManager(
         _projectTitle,
         factoryAddress,
         bytecodeHash,
         validLuckMatchers,
-        workerNum,
+        allWorkers,
         forceRecreate,
         (msg, type) => {
           log(msg, type as any)
@@ -134,9 +142,14 @@ export function useLuckyAddress(
 
   useEffect(() => {
     if (workerManager) {
-      workerManager.changeWorkerNum(workerNum)
+      const allWorkers = new Array(MAX_WORKERS).fill(false)
+
+      const scopeMin = Math.max(workerProcess[0], 0)
+      const scopeMax = Math.min(workerProcess[1], MAX_WORKERS)
+      allWorkers.fill(true, scopeMin - 1, scopeMax)
+      workerManager.changeWorkerProcess(allWorkers)
     }
-  }, [workerNum])
+  }, [workerProcess])
 
   function _genFinalByteCode(
     _contractByteCode: `0x${string}`,

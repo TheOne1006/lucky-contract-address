@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 contract LuckyFactory {
     address payable public immutable owner;
+    string public constant WEBSITE = "lca.theone.io";
     event Deploy(address indexed deployedAddress, uint256 salt);
 
     constructor() {

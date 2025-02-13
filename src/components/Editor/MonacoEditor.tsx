@@ -76,7 +76,7 @@ export const MonacoEditor = ({
     if (!codeEditor) {
       return
     }
-  }, [codeEditor])
+  }, [codeEditor, readonly])
 
   return (
     <div className="h-full">
@@ -85,6 +85,7 @@ export const MonacoEditor = ({
           minimap: {
             enabled: minimap,
           },
+          readOnly: readonly,
           hover: {
             enabled: enableValidation,
           },

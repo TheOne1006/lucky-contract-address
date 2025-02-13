@@ -36,7 +36,7 @@ export interface IProjectLuckySettingType {
   luckyNumberText: string
   allowDynamicConstructorParams: boolean
   constructorParams: DeployParam[]
-  workerNum: number
+  workerProcess: [number, number]
   factoryAddress: `0x${string}`
 }
 
@@ -64,7 +64,7 @@ export const initProject: IProjectType = {
   constructorParams: [],
   finalByteCode: "" as `0x${string}`,
   validLuckMatchers: [],
-  workerNum: 1,
+  workerProcess: [1, 4],
   factoryAddress: "0x0000000000000000000000000000000000000000",
 }
 
