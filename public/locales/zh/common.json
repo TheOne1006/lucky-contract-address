@@ -59,7 +59,8 @@
     "Collapse": "收起",
     "Copy": "复制",
     "Deploy": "部署",
-    "Compileing": "编译中..."
+    "Compileing": "编译中...",
+    "Deploying": "部署中..."
   },
   "label": {
     "CheckTitle": "幸运合约地址",

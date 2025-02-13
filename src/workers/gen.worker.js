@@ -64,7 +64,7 @@ function processHashMatch(worker, hash, workerId, matchRegs) {
     throw new Error("Invalid hash format")
   }
 
-  const address = `0x${hash.slice(24, colonIndex)}`
+  const address = `0x${hash.slice(0, colonIndex)}`
   const salt = `0x${hash.slice(colonIndex + 1, colonIndex + 65)}`
 
   for (const pattern of matchRegs) {
