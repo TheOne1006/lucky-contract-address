@@ -38,12 +38,12 @@ export const MAX_SALT = BigInt(
 //   "0x0fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
 // )
 
-export const MAX_ENABLE_WORKERS = 8
 export const MAX_WORKERS = 16
 
-export const PROJECT_LIST_KEY = "LUCKY:PROJECTS"
-export const PROJECT_PREFIX = "LUCKY:PROJECT:"
-export const WORKERS_PREFIX = "LUCKY:WORKERS:"
+export const CACHE_PREFIX = "LCA:"
+export const PROJECT_LIST_KEY = "PROJECTS"
+export const PROJECT_PREFIX = "PROJECT:"
+export const WORKERS_PREFIX = "WORKERS:"
 
 /**
  * allow value unit

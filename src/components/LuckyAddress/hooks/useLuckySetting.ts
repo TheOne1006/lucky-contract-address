@@ -29,8 +29,9 @@ export function useLuckySetting(
   const [factoryAddress, setFactoryAddress] = useState<
     IProjectLuckySettingType["factoryAddress"]
   >("0x0000000000000000000000000000000000000000")
-  const [workerNum, setWorkerNum] =
-    useState<IProjectLuckySettingType["workerNum"]>(4)
+  const [workerProcess, setWorkerProcess] = useState<
+    IProjectLuckySettingType["workerProcess"]
+  >([1, 4])
 
   const [optimize, setOptimize] =
     useState<IProjectLuckySettingType["optimize"]>(false)
@@ -200,8 +201,7 @@ export function useLuckySetting(
     setAllowDynamicConstructorParams(data.allowDynamicConstructorParams)
 
     setConstructorParams(data.constructorParams)
-
-    setWorkerNum(data.workerNum)
+    setWorkerProcess([...data.workerProcess])
     // setFactoryAddress(data.factoryAddress)
   }
   //
@@ -232,8 +232,8 @@ export function useLuckySetting(
     onConstructorParamsChange,
     save2LuckySetting,
     factoryAddress,
-    workerNum,
-    onWorkerNumChange: setWorkerNum,
+    workerProcess,
+    onWorkerProcessChange: setWorkerProcess,
     refreshFactoryAddress,
   }
 }

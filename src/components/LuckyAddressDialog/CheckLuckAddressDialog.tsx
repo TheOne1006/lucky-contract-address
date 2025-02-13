@@ -1,3 +1,5 @@
+import { encodePacked, keccak256 } from "viem"
+import { useEffect, useState } from "react"
 import { useTranslation } from "next-i18next"
 import {
   Dialog,
@@ -32,6 +34,20 @@ export default function CheckLuckAddressDialog({
   startGen,
 }: CheckLuckAddressDialogProps) {
   const { t } = useTranslation("common")
+  const [checksum, setChecksum] = useState<`0x${string}` | undefined>()
+
+  useEffect(() => {
+    if (open && bytecode && factoryAddress && validLuckMatchers.length > 0) {
+      const validLuckMatchersStr = validLuckMatchers.join("_")
+      const encodedData = encodePacked(
+        ["address", "string", "string"],
+        [factoryAddress as `0x${string}`, bytecode, validLuckMatchersStr],
+      )
+      const _checksum = keccak256(encodedData)
+      setChecksum(_checksum.slice(0, 22) as `0x${string}`)
+    }
+  }, [open, bytecode, factoryAddress, validLuckMatchers])
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle className="dark:bg-black-400 dark:text-white">
@@ -47,8 +63,15 @@ export default function CheckLuckAddressDialog({
 
           <div className="divide-y divide-gray-100 dark:divide-gray-500">
             <div className="py-4">
+              <dd className="overflow-y-auto whitespace-pre-wrap break-all text-sm leading-5 text-gray-500 dark:text-gray-400">
+                Checksum:
+                <span className="px-2 text-red-500">{checksum}</span>
+              </dd>
+            </div>
+
+            <div className="py-4">
               <dt className="mb-2 text-sm font-medium leading-6">ByteCode</dt>
-              <dd className="whitespace-pre-wrap break-all text-sm leading-5 text-gray-500 dark:text-gray-400">
+              <dd className="max-h-[300px] overflow-y-auto whitespace-pre-wrap break-all text-sm leading-5 text-gray-500 dark:text-gray-400">
                 {bytecode}
               </dd>
             </div>

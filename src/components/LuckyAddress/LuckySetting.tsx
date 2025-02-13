@@ -6,6 +6,7 @@ import { MonacoEditor } from "@/components/Editor"
 import AbiParameterInput from "./AbiParameterInput"
 import { ALLOW_CONSTRUCTOR_PARAMS_TYPES } from "@/util/constants"
 import { ABI_PARAMETER_INPUT_MAP } from "@/util/abi"
+import { MAX_WORKERS } from "@/util/common.constants"
 import type { DeployParam } from "@/types/lucky"
 
 type LuckySettingProps = {
@@ -17,8 +18,8 @@ type LuckySettingProps = {
   allowDynamicConstructorParams?: boolean
   constructorParams?: DeployParam[]
   factoryAddress: `0x${string}`
-  workerNum: number
-  onWorkerNumChange: (num: number) => void
+  workerProcess: [number, number]
+  onWorkerProcessChange: (newProcess: [number, number]) => void
   onConstructorParamsChange: (param: DeployParam, ind: number) => void
   onConstructorParamsAppend: (param: DeployParam) => void
   onConstructorParamsDelect: (id: number) => void
@@ -39,8 +40,8 @@ export default function LuckySetting({
   allowDynamicConstructorParams = false,
   constructorParams,
   factoryAddress,
-  workerNum,
-  onWorkerNumChange,
+  workerProcess,
+  onWorkerProcessChange,
   onLuckyNumberTextChange,
   onConstructorParamsChange,
   onConstructorParamsAppend,
@@ -236,13 +237,21 @@ export default function LuckySetting({
                 // getAriaValueText={valuetext}
                 valueLabelDisplay="auto"
                 onChange={(e, newValue) => {
-                  onWorkerNumChange(newValue as number)
+                  if (Array.isArray(newValue) && newValue.length == 2) {
+                    // 排序
+                    const sortValue = newValue.sort((a, b) => a - b)
+                    onWorkerProcessChange([...sortValue] as [number, number])
+                  }
                 }}
                 step={1}
                 marks
-                value={workerNum}
+                value={workerProcess}
                 min={1}
-                max={8}
+                max={MAX_WORKERS}
+                // value={value2}
+                // onChange={handleChange2}
+                // valueLabelDisplay="auto"
+                disableSwap
               />
             </div>
           </div>
@@ -299,6 +308,7 @@ export default function LuckySetting({
               // 构造参数 value 存在空
               (constructorParams || []).some((item) => !item.value) ||
               !luckyNumberText ||
+              !curProjectTitle || // 当前项目名为空
               isComputing
             }
             size="sm"

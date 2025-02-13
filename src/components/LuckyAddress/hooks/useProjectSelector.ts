@@ -4,6 +4,7 @@ import { useTranslation } from "next-i18next"
 import { UndoNotification } from "@/components/ui"
 import { useStorage } from "@/hooks/useStorage"
 import {
+  cacheExist,
   loadStorageData,
   save2StorageData,
   deleteStorageData,
@@ -38,6 +39,7 @@ export function useProjectSelector(
 
       return next
     })
+    setCurProjectTitle(projetTitle)
   }
 
   function deleteProject(projectTitle: string) {
@@ -88,8 +90,13 @@ export function useProjectSelector(
     save2StorageData(key, data)
   }
 
-  function loadProjectFromLocalStorage(projectTitle: string): IProjectType {
+  function loadProjectFromLocalStorage(
+    projectTitle: string,
+  ): IProjectType | undefined {
     const key = genCacheProjectKey(projectTitle)
+    if (!cacheExist(key)) {
+      return undefined
+    }
     const data = loadStorageData<IProjectType>(key, initProject)
     log(`load project: ${projectTitle} from localStorage`)
     return data

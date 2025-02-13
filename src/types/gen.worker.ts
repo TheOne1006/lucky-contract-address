@@ -31,7 +31,7 @@ export type StorageData = {
     address: string
     time: number
   }[]
-  currentSalts: bigint[]
+  currentSalts: (bigint | string)[]
 }
 
 export interface IGenWorkerInput {

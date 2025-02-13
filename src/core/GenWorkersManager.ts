@@ -6,12 +6,7 @@ import {
   deleteStorageData,
 } from "@/util/storage"
 // import { jsonStringify } from "@/util/string"
-import {
-  WORKERS_PREFIX,
-  MAX_ENABLE_WORKERS,
-  MAX_WORKERS,
-  MAX_SALT,
-} from "@/util/constants"
+import { WORKERS_PREFIX, MAX_WORKERS, MAX_SALT } from "@/util/constants"
 
 import {
   WorkerStatus,
@@ -25,6 +20,8 @@ import { jsonStringify } from "@/util/string"
 
 const workerSize = MAX_SALT / BigInt(MAX_WORKERS)
 
+const defaultProcess = new Array(MAX_WORKERS).fill(false)
+
 export class GenWorkersManager {
   private workers: WorkerItem[] = []
   private projectTitle = ""
@@ -33,7 +30,7 @@ export class GenWorkersManager {
   private luckAddressSaltLogs: StorageData["luckAddressSaltLogs"] = []
   private luckAddressSaltLogsMax = 10_000
   private uniqueId: string
-  private enableNumber = 0
+  private enableProcess: boolean[] = [...defaultProcess]
   private log: (
     workerIdOrManager: string,
     action: string,
@@ -53,7 +50,7 @@ export class GenWorkersManager {
     factoryAddress: `0x${string}`,
     bytecodeHash: `0x${string}`,
     matches: string[],
-    enableNumber = 0,
+    enableProcess: boolean[] = defaultProcess,
     forceRecreate = false,
     log: (msg: any, type?: string) => void,
     logSuccess: (address: string, salt: string, time: number) => void,
@@ -68,7 +65,7 @@ export class GenWorkersManager {
     this.projectTitle = projectTitle
     this.commonParams = params
     this.uniqueId = GenWorkersManager.generateUniqueId(projectTitle, params)
-    this.enableNumber = enableNumber
+    this.enableProcess = enableProcess
 
     this.initAllWorkers()
     if (!forceRecreate) {
@@ -79,7 +76,7 @@ export class GenWorkersManager {
       this.luckAddressSaltLogs = []
     }
 
-    if (enableNumber > 0) {
+    if (enableProcess.some((item) => item)) {
       this.startAll()
     }
   }
@@ -226,7 +223,7 @@ export class GenWorkersManager {
 
     // update workers.currentSalt
     this.workers.forEach((worker, index) => {
-      worker.saltCurrent = data.currentSalts[index]
+      worker.saltCurrent = BigInt(data.currentSalts[index])
     })
   }
 
@@ -283,9 +280,6 @@ export class GenWorkersManager {
           item.status = WorkerStatus.FINISHED
           worker.terminate()
           this.saveToCache()
-          setTimeout(() => {
-            this.changeWorkerNum(this.enableNumber)
-          }, 1000)
         } else if (type === GenWorkerOutputType.MATCH) {
           this.log(workerId, "match", `find address: ${address} with ${salt}`)
           this.showToast("find address: " + address)
@@ -357,7 +351,7 @@ export class GenWorkersManager {
   }
 
   public startAll(): void {
-    this.changeWorkerNum(this.enableNumber)
+    this.changeProcess(this.enableProcess)
     this.saveToCache()
   }
 
@@ -386,7 +380,9 @@ export class GenWorkersManager {
       factoryAddress: commonParams.factoryAddress,
       bytecodeHash: commonParams.bytecodeHash || "",
       matches: commonParams.matches.map((m) => m.toString()) || [],
-      currentSalts: this.workers.map((w) => w.saltCurrent) || [],
+      currentSalts:
+        this.workers.map((w) => `0x${BigInt(w.saltCurrent).toString(16)}`) ||
+        [],
     }
     save2StorageData(key, data)
   }
@@ -408,51 +404,43 @@ export class GenWorkersManager {
   /**
    * 切换 不同的 worker 数量，恢复 或者新建 worker
    */
-  public changeWorkerNum(num: number) {
-    // 检查输入的数量是否在允许范围内
-    if (num <= 0 || num > MAX_ENABLE_WORKERS) {
-      throw new Error(
-        `Worker number must be between 1 and ${MAX_ENABLE_WORKERS}`,
-      )
-    }
-
-    const runningNum = this.workers.filter(
-      (w) => w.status == WorkerStatus.RUNNING && !!w.worker,
-    ).length
-
-    if (runningNum == num) {
-      return
-    }
-    this.enableNumber = num
-    let curIndex = 0
-
-    const total = this.workers.length
-    for (let i = 0; i < total; i++) {
+  private changeProcess(process: boolean[]) {
+    // 遍历 process
+    for (let i = 0; i < process.length; i++) {
+      const start = process[i]
       const item = this.workers[i]
+
       if (item.status == WorkerStatus.FINISHED) {
         continue
       }
 
-      if (curIndex >= num) {
-        // 停止超过数量的 worker
-        // console.log(
-        //   `stop worker i: ${i}, status: ${item.status}, has worker: ${!!item.worker}`,
-        // )
+      if (start) {
+        // 如果 worker 已经在运行，则跳过
+        if (item.status == WorkerStatus.RUNNING && !!item.worker) {
+          continue
+        }
+        this.startWorker(i)
+      } else {
+        // 存在 worker 或者 RUNNING 则关闭
         if (item.status == WorkerStatus.RUNNING || !!item.worker) {
           this.stopWorker(i)
         }
-      } else {
-        // 未激活的 worker 开始工作
-        if (item.status != WorkerStatus.RUNNING || !item.worker) {
-          this.startWorker(i)
-        }
-
-        curIndex++
       }
     }
-
     // 保存更改到缓存
     this.saveToCache()
+  }
+
+  public changeWorkerProcess(process: boolean[]) {
+    // 检查输入的数量是否在允许范围内
+    if (process.length != MAX_WORKERS) {
+      throw new Error(
+        `changeWorkerProcess input length ${process.length} not equal ${MAX_WORKERS}`,
+      )
+    }
+
+    this.enableProcess = process
+    this.changeProcess(process)
   }
 
   public getLuckAddressSaltLogs(): StorageData["luckAddressSaltLogs"] {

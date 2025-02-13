@@ -1,7 +1,7 @@
 import { useTranslation } from "next-i18next"
 import { Icon } from "@/components/ui"
 import clsx from "clsx"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 type LogTableProps = {
   logs: {
@@ -9,7 +9,7 @@ type LogTableProps = {
     salt: string
     time: number
   }[]
-
+  matchers?: string[]
   onOpenDeployModal: (_salt: bigint, _address: `0x${string}`) => void
 }
 
@@ -22,11 +22,95 @@ const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text)
 }
 
-const LogTable = ({ logs, onOpenDeployModal }: LogTableProps) => {
+// 在渲染部分，将地址文本分成三部分：前缀、高亮部分和后缀
+const renderHighlightedAddress = (
+  address: string,
+  highlight: { text: string; index: number },
+) => {
+  if (!highlight.text || highlight.index === -1) return address
+
+  const prefix = address.slice(0, highlight.index)
+  const highlightedText = address.slice(
+    highlight.index,
+    highlight.index + highlight.text.length,
+  )
+  const suffix = address.slice(highlight.index + highlight.text.length)
+
+  return (
+    <>
+      {prefix}
+      <span className="text-red-500">{highlightedText}</span>
+      {suffix}
+    </>
+  )
+}
+
+const LogTable = ({ logs, matchers, onOpenDeployModal }: LogTableProps) => {
   const { t } = useTranslation("common")
+
   const [expandedRows, setExpandedRows] = useState<{ [key: string]: boolean }>(
     {},
   )
+  const [logsWithHightLight, setLogsWithHightLight] = useState<
+    {
+      address: string
+      salt: string
+      time: number
+      highlight: {
+        text: string
+        index: number
+      }
+    }[]
+  >([])
+
+  useEffect(() => {
+    if (!matchers?.length) {
+      setLogsWithHightLight(
+        logs.map((log) => ({ ...log, highlight: { text: "", index: -1 } })),
+      )
+      return
+    }
+    // 初始化 matchers => (regex|string)[]
+    const regexStringArray = matchers
+      ?.filter((matcher): matcher is string => matcher !== undefined)
+      .map((matcher) => {
+        console.log("matcher,", matcher)
+        // 如果包含 //
+        if (matcher.startsWith("/")) {
+          try {
+            const regex = new RegExp(matcher.slice(1, -1), "i")
+            return regex
+          } catch (e) {
+            return undefined
+          }
+        }
+        return matcher
+      })
+      .filter((item) => item)
+
+    // 遍历 logs, 找到匹配的, 并高亮
+    const newLogs = logs.map((log) => {
+      let highlight = { text: "", index: -1 }
+      for (const regex of regexStringArray) {
+        if (regex instanceof RegExp) {
+          const match = log.address.match(regex)
+          console.log("match,", match)
+          if (match) {
+            highlight = { text: match[0], index: match.index || -1 }
+            break
+          }
+        } else {
+          const index = log.address.indexOf(regex as string)
+          if (index !== -1) {
+            highlight = { text: regex as string, index }
+            break
+          }
+        }
+      }
+      return { ...log, highlight }
+    })
+    setLogsWithHightLight(newLogs)
+  }, [matchers?.length, matchers?.join("-"), logs.length])
 
   const toggleRow = (address: string, expanded: boolean) => {
     setExpandedRows((prev) => {
@@ -97,7 +181,13 @@ const LogTable = ({ logs, onOpenDeployModal }: LogTableProps) => {
                     <span>{t("action.Deploy")}</span>
                   </button>
                 </div>
-                <div className="break-all text-white">{log.address}</div>
+                <div className="break-all text-white">
+                  {renderHighlightedAddress(
+                    log.address,
+                    logsWithHightLight.find((l) => l.address === log.address)
+                      ?.highlight || { text: "", index: -1 },
+                  )}
+                </div>
                 <div className="font-medium text-white">Salt：</div>
                 <div className="break-all text-gray-300">{log.salt}</div>
                 <div className="font-medium text-white">
@@ -114,7 +204,11 @@ const LogTable = ({ logs, onOpenDeployModal }: LogTableProps) => {
                   className="col-span-8 truncate font-medium text-white"
                   title={log.address}
                 >
-                  {log.address}
+                  {renderHighlightedAddress(
+                    log.address,
+                    logsWithHightLight.find((l) => l.address === log.address)
+                      ?.highlight || { text: "", index: -1 },
+                  )}
                 </div>
                 {/* <div
                 className="col-span-3 truncate text-gray-300"

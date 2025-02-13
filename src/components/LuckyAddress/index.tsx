@@ -58,8 +58,8 @@ const LuckyAddress = () => {
     onConstructorParamsChange,
     save2LuckySetting,
     factoryAddress,
-    workerNum,
-    onWorkerNumChange,
+    workerProcess,
+    onWorkerProcessChange,
     refreshFactoryAddress,
   } = useLuckySetting(log)
 
@@ -77,7 +77,7 @@ const LuckyAddress = () => {
     forceRecreate,
     uniqueIdSameToCache,
     luckyAddressSaltLogs,
-  } = useLuckyAddress(log, workerNum)
+  } = useLuckyAddress(log, workerProcess)
 
   const {
     isDeploying,
@@ -99,7 +99,6 @@ const LuckyAddress = () => {
       forkEnv,
       code,
       contractByteCode,
-
       // luckySetting
       luckyNumberText,
       allowDynamicConstructorParams,
@@ -109,15 +108,17 @@ const LuckyAddress = () => {
       validLuckMatchers,
       isValidSolidityCode,
       factoryAddress,
-      workerNum,
+      workerProcess: [...workerProcess],
     }
     saveProject2localStorage(curProjectTitle, data)
   }
 
   const loadFromStorage = (_projectTitle: string) => {
     const data = loadProjectFromLocalStorage(_projectTitle)
-    save2LuckySetting(data)
-    save2LuckAddress(data)
+    if (data) {
+      save2LuckySetting(data)
+      save2LuckAddress(data)
+    }
   }
 
   return (
@@ -176,8 +177,8 @@ const LuckyAddress = () => {
               allowDynamicConstructorParams={allowDynamicConstructorParams}
               constructorParams={constructorParams}
               factoryAddress={factoryAddress}
-              workerNum={workerNum}
-              onWorkerNumChange={onWorkerNumChange}
+              workerProcess={workerProcess}
+              onWorkerProcessChange={onWorkerProcessChange}
               onConstructorParamsChange={onConstructorParamsChange}
               onConstructorParamsAppend={onConstructorParamsAppend}
               onConstructorParamsDelect={onConstructorParamsDelect}
@@ -196,6 +197,7 @@ const LuckyAddress = () => {
           >
             <LogTable
               logs={luckyAddressSaltLogs}
+              matchers={validLuckMatchers}
               onOpenDeployModal={onOpenDeployModal}
             />
           </div>
