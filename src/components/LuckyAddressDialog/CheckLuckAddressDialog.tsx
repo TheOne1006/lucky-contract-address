@@ -35,9 +35,13 @@ export default function CheckLuckAddressDialog({
 }: CheckLuckAddressDialogProps) {
   const { t } = useTranslation("common")
   const [checksum, setChecksum] = useState<`0x${string}` | undefined>()
+  const [byteCodeHash, setByteCodeHash] = useState<`0x${string}` | undefined>()
 
   useEffect(() => {
     if (open && bytecode && factoryAddress && validLuckMatchers.length > 0) {
+      const _bytecodeHash = keccak256(bytecode as `0x${string}`)
+      setByteCodeHash(_bytecodeHash)
+
       const validLuckMatchersStr = validLuckMatchers.join("_")
       const encodedData = encodePacked(
         ["address", "string", "string"],
@@ -71,8 +75,17 @@ export default function CheckLuckAddressDialog({
 
             <div className="py-4">
               <dt className="mb-2 text-sm font-medium leading-6">ByteCode</dt>
-              <dd className="max-h-[300px] overflow-y-auto whitespace-pre-wrap break-all text-sm leading-5 text-gray-500 dark:text-gray-400">
+              <dd className="max-h-[200px] overflow-y-auto whitespace-pre-wrap break-all text-sm leading-5 text-gray-500 dark:text-gray-400">
                 {bytecode}
+              </dd>
+            </div>
+
+            <div className="py-4">
+              <dt className="mb-2 text-sm font-medium leading-6">
+                ByteCodeHash
+              </dt>
+              <dd className="max-h-[200px] overflow-y-auto whitespace-pre-wrap break-all text-sm leading-5 text-gray-500 dark:text-gray-400">
+                {byteCodeHash}
               </dd>
             </div>
 
