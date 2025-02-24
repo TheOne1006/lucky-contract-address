@@ -38,7 +38,7 @@ export class GenWorkersManager {
     type?: any,
   ) => void
   private workerBatchSize = Number(
-    process.env.NEXT_PUBLIC_WORKER_BATCH_SIZE ?? 1_000_000,
+    process.env.NEXT_PUBLIC_WORKER_BATCH_SIZE ?? 100_000,
   ) // 100 w
   private workerLogInterval = Number(
     process.env.NEXT_PUBLIC_WORKER_LOG_INTERVAL ?? 10,
