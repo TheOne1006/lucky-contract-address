@@ -86,9 +86,7 @@ export function useLuckyAddress(
       log(`luckNumber: ${validLuckMatchers.join(",")}`)
       log(`init worker process: ${workerProcess.join("-")}`)
       log(`forceRecreate: ${forceRecreate}`)
-      log(
-        `bytecodeHash: ${bytecodeHash.slice(0, 10)}...${bytecodeHash.slice(-8)}`,
-      )
+      log(`bytecodeHash: ${bytecodeHash}`)
       log("------------------------------")
 
       const allWorkers = new Array(MAX_WORKERS).fill(false)
