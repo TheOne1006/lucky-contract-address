@@ -224,7 +224,7 @@ export default function LuckySetting({
             </code>{" "}
             or{" "}
             <code className="rounded bg-gray-200 px-1 py-0.5 font-mono text-sm text-red-400">
-              /^0x[0-9a-f]{4}$/
+              /([\0-9a-f])\1{8}/
             </code>
           </p>
         </div>
