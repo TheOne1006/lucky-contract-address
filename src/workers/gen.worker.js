@@ -105,12 +105,21 @@ self.addEventListener("message", async (msg) => {
   checkParams(factoryAddress, current, bytecodeHash)
 
   // 将 BigInt 转换为固定长度（64位）的十六进制字符串
-  const saltHex = current.toString(16).padStart(64, "0")
-  const saltBytes = hexToBytes(saltHex)
-  const factoryAddressBytes = hexToBytes(factoryAddress)
-  const bytecodeHashBytes = hexToBytes(bytecodeHash)
+  const currentHexStr = current.toString(16).padStart(64, "0")
+  const minHexStr = min.toString(16).padStart(64, "0")
+  const maxHexStr = max.toString(16).padStart(64, "0")
 
-  compute_ready(factoryAddressBytes, saltBytes, bytecodeHashBytes)
+  // const saltBytes = hexToBytes(saltHex)
+  // const factoryAddressBytes = hexToBytes(factoryAddress)
+  // const bytecodeHashBytes = hexToBytes(bytecodeHash)
+
+  compute_ready(
+    factoryAddress,
+    bytecodeHash,
+    minHexStr,
+    currentHexStr,
+    maxHexStr,
+  )
 
   const matchRegs = compileMatches(matches)
 

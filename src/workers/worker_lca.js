@@ -34,42 +34,113 @@ function getStringFromWasm0(ptr, len) {
 
 let WASM_VECTOR_LEN = 0
 
-function passArray8ToWasm0(arg, malloc) {
-  const ptr = malloc(arg.length * 1, 1) >>> 0
-  getUint8ArrayMemory0().set(arg, ptr / 1)
-  WASM_VECTOR_LEN = arg.length
+const cachedTextEncoder =
+  typeof TextEncoder !== "undefined"
+    ? new TextEncoder("utf-8")
+    : {
+        encode: () => {
+          throw Error("TextEncoder not available")
+        },
+      }
+
+const encodeString =
+  typeof cachedTextEncoder.encodeInto === "function"
+    ? function (arg, view) {
+        return cachedTextEncoder.encodeInto(arg, view)
+      }
+    : function (arg, view) {
+        const buf = cachedTextEncoder.encode(arg)
+        view.set(buf)
+        return {
+          read: arg.length,
+          written: buf.length,
+        }
+      }
+
+function passStringToWasm0(arg, malloc, realloc) {
+  if (realloc === undefined) {
+    const buf = cachedTextEncoder.encode(arg)
+    const ptr = malloc(buf.length, 1) >>> 0
+    getUint8ArrayMemory0()
+      .subarray(ptr, ptr + buf.length)
+      .set(buf)
+    WASM_VECTOR_LEN = buf.length
+    return ptr
+  }
+
+  let len = arg.length
+  let ptr = malloc(len, 1) >>> 0
+
+  const mem = getUint8ArrayMemory0()
+
+  let offset = 0
+
+  for (; offset < len; offset++) {
+    const code = arg.charCodeAt(offset)
+    if (code > 0x7f) break
+    mem[ptr + offset] = code
+  }
+
+  if (offset !== len) {
+    if (offset !== 0) {
+      arg = arg.slice(offset)
+    }
+    ptr = realloc(ptr, len, (len = offset + arg.length * 3), 1) >>> 0
+    const view = getUint8ArrayMemory0().subarray(ptr + offset, ptr + len)
+    const ret = encodeString(arg, view)
+
+    offset += ret.written
+    ptr = realloc(ptr, len, offset, 1) >>> 0
+  }
+
+  WASM_VECTOR_LEN = offset
   return ptr
 }
 /**
- * @param {Uint8Array} factory_address
- * @param {Uint8Array} salt
- * @param {Uint8Array} bytecode_hash
+ * @param {string} factory_address
+ * @param {string} bytecode_hash
+ * @param {string} start_salt
+ * @param {string} salt
+ * @param {string} end_salt
  */
-export function compute_ready(factory_address, salt, bytecode_hash) {
-  const ptr0 = passArray8ToWasm0(factory_address, wasm.__wbindgen_malloc)
+export function compute_ready(
+  factory_address,
+  bytecode_hash,
+  start_salt,
+  salt,
+  end_salt,
+) {
+  const ptr0 = passStringToWasm0(
+    factory_address,
+    wasm.__wbindgen_malloc,
+    wasm.__wbindgen_realloc,
+  )
   const len0 = WASM_VECTOR_LEN
-  const ptr1 = passArray8ToWasm0(salt, wasm.__wbindgen_malloc)
+  const ptr1 = passStringToWasm0(
+    bytecode_hash,
+    wasm.__wbindgen_malloc,
+    wasm.__wbindgen_realloc,
+  )
   const len1 = WASM_VECTOR_LEN
-  const ptr2 = passArray8ToWasm0(bytecode_hash, wasm.__wbindgen_malloc)
+  const ptr2 = passStringToWasm0(
+    start_salt,
+    wasm.__wbindgen_malloc,
+    wasm.__wbindgen_realloc,
+  )
   const len2 = WASM_VECTOR_LEN
-  wasm.compute_ready(ptr0, len0, ptr1, len1, ptr2, len2)
-}
-
-/**
- * 计算下一个 CREATE2 地址
- * @returns {string}
- */
-export function compute_next() {
-  let deferred1_0
-  let deferred1_1
-  try {
-    const ret = wasm.compute_next()
-    deferred1_0 = ret[0]
-    deferred1_1 = ret[1]
-    return getStringFromWasm0(ret[0], ret[1])
-  } finally {
-    wasm.__wbindgen_free(deferred1_0, deferred1_1, 1)
-  }
+  const ptr3 = passStringToWasm0(
+    salt,
+    wasm.__wbindgen_malloc,
+    wasm.__wbindgen_realloc,
+  )
+  const len3 = WASM_VECTOR_LEN
+  const ptr4 = passStringToWasm0(
+    end_salt,
+    wasm.__wbindgen_malloc,
+    wasm.__wbindgen_realloc,
+  )
+  const len4 = WASM_VECTOR_LEN
+  wasm.compute_ready(ptr0, len0, ptr1, len1, ptr2, len2, ptr3, len3, ptr4, len4)
 }
 
 let cachedDataViewMemory0 = null
@@ -209,7 +280,8 @@ async function __wbg_init(module_or_path) {
   }
 
   if (typeof module_or_path === "undefined") {
-    throw new Error("module_or_path not provided")
+    throw new Error("No module provided")
+    // module_or_path = new URL('worker_lca_bg.wasm', import.meta.url);
   }
   const imports = __wbg_get_imports()
 
